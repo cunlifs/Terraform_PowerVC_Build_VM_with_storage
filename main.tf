@@ -46,7 +46,7 @@ resource "openstack_compute_instance_v2" "smc-vm" {
 }
 
 resource "openstack_blockstorage_volume_v3" "volume" {
-  count       = 1
+  count       = 2
   name        = format("volume-${random_id.rand.hex}-%02d", count.index+1)
   description = "Volume created by terraform"
   size        = 3
