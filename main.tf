@@ -43,20 +43,38 @@ resource "openstack_compute_instance_v2" "smc-vm" {
         uuid = var.openstack_network_id
         name = var.openstack_network_name
     }
-    provisioner "remote-exec" {
-        connection {
+}
+
+resource "openstack_blockstorage_volume_v3" "volume" {
+  count       = 1
+  name        = format("volume-${random_id.rand.hex}-%02d", count.index+1)
+  description = "Volume created by terraform"
+  size        = 3
+}
+
+resource "openstack_compute_volume_attach_v2" "va_1" {
+  volume_id  = openstack_blockstorage_volume_v3.volume[0].id
+  instance_id  = openstack_compute_instance_v2.smc-vm[0].id
+}
+
+resource "null_resource" "check_storage" {
+    connection {
             type        = "ssh"
             user        = var.sles_username
             host        = self.access_ip_v4
             private_key = local.private_key
             agent       = var.ssh_agent
             timeout     = "${var.connection_timeout}m"
-        }
-
-        on_failure  = continue
+    }
+    provisioner "remote-exec" {
         inline = [
-             "cat /etc/hosts"
+            "pvs",
+            "pvdisplay"
         ]
     }
-#    user_data = file("bootstrap_icp_worker.sh")
+    provisioner "remote-exec" {
+        inline = [
+            "lvs"
+        ]
+    }
 }
