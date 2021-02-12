@@ -15,10 +15,14 @@
 
 variable "openstack_user_name" {
     description = "The user name used to connect to OpenStack."
+    type = string
+    sensitive = true
 }
 
 variable "openstack_password" {
     description = "The password for the user."
+    type = string
+    sensitive = true
 }
 
 variable "openstack_admin_role" {
