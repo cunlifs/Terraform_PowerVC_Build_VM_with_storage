@@ -62,24 +62,49 @@ resource "openstack_compute_volume_attach_v2" "va_2" {
   instance_id  = openstack_compute_instance_v2.app-vms[0].id
 }
 
+# This runs after volume attach finishes
 resource "null_resource" "check_storage" {
-    connection {
-            type        = "ssh"
-            user        = var.sles_username
-            host        = openstack_compute_instance_v2.app-vms[*].access_ip_v4
-            private_key = local.private_key
-            agent       = var.ssh_agent
-            timeout     = "${var.connection_timeout}m"
-    }
-    provisioner "remote-exec" {
-        inline = [
-            "pvs",
-            "pvdisplay"
-        ]
-    }
-    provisioner "remote-exec" {
-        inline = [
-            "lvs"
-        ]
-    }
+  depends_on = ["openstack_compute_volume_attach_v2.va_2"]
+  count = "${length(openstack_compute_instance_v2.app-vms.*.id)}"
+  connection {
+    host = "${element(openstack_compute_instance_v2.app-vms.*.access_ip_v4, count.index)}"
+    type        = "ssh"
+    user        = var.sles_username
+    private_key = local.private_key
+    agent       = var.ssh_agent
+    timeout     = "${var.connection_timeout}m"
+  }
+  provisioner "remote-exec" {
+      inline = [
+          "pvs",
+          "pvdisplay"
+      ]
+  }
+  provisioner "remote-exec" {
+      inline = [
+          "lvs"
+      ]
+  }
 }
+
+#resource "null_resource" "check_storage" {
+#    connection {
+#            type        = "ssh"
+#            user        = var.sles_username
+#            host        = openstack_compute_instance_v2.app-vms[*].access_ip_v4
+#            private_key = local.private_key
+#            agent       = var.ssh_agent
+#            timeout     = "${var.connection_timeout}m"
+#    }
+#    provisioner "remote-exec" {
+#        inline = [
+#            "pvs",
+#            "pvdisplay"
+#        ]
+#    }
+#    provisioner "remote-exec" {
+#        inline = [
+#            "lvs"
+#        ]
+#    }
+#}
