@@ -66,7 +66,7 @@ resource "null_resource" "check_storage" {
     connection {
             type        = "ssh"
             user        = var.sles_username
-            host        = openstack_compute_instance_v2.app-vms[0].access_ip_v4
+            host        = openstack_compute_instance_v2.app-vms[*].access_ip_v4
             private_key = local.private_key
             agent       = var.ssh_agent
             timeout     = "${var.connection_timeout}m"
