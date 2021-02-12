@@ -64,7 +64,7 @@ resource "openstack_compute_volume_attach_v2" "va_2" {
 
 # This runs after volume attach finishes
 resource "null_resource" "check_storage" {
-  depends_on = ["openstack_compute_volume_attach_v2.va_2"]
+  depends_on = [openstack_compute_volume_attach_v2.va_2]
   count = length(openstack_compute_instance_v2.app-vms.*.id)
   connection {
     host = element(openstack_compute_instance_v2.app-vms.*.access_ip_v4, count.index)
