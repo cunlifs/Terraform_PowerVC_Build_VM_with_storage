@@ -46,7 +46,7 @@ resource "openstack_compute_instance_v2" "app-vms" {
 }
 
 resource "openstack_blockstorage_volume_v3" "volume-1" {
-  depends_on = [openstack_compute_instance_v2.app-vms]
+#  depends_on = [openstack_compute_instance_v2.app-vms]
   count       = 2
   name        = format("volume-${random_id.rand.hex}-%02d", count.index+1)
   description = "Volume created by terraform"
