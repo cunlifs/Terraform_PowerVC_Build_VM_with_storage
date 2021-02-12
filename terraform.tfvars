@@ -15,9 +15,9 @@
 ################################################################
 
 # Authentication
-openstack_user_name="root"
+openstack_user_name=""
 openstack_project_user_id="f021608837ec327fb575bf848d553466ef1eb57ee46b863c603ae63efc944af9"
-openstack_password="Passw0rd"
+openstack_password=""
 openstack_admin_role="47d2a6f71c88422d9536e9e890fa1f86"
 
 # OpenStack Environment
