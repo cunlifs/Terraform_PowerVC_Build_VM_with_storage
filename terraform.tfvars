@@ -15,13 +15,13 @@
 ################################################################
 
 # Authentication
-#openstack_user_name=""
+openstack_user_name="essity1"
 openstack_project_user_id="f021608837ec327fb575bf848d553466ef1eb57ee46b863c603ae63efc944af9"
-#openstack_password=""
+#openstack_password="abc1234"
 openstack_admin_role="47d2a6f71c88422d9536e9e890fa1f86"
 
 # OpenStack Environment
-openstack_default_project_name="ibm-default"
+openstack_default_project_name="essity-project-1"
 openstack_domain_name="Default"
 openstack_auth_url="https://p9-powervc:5000/v3/"
 
