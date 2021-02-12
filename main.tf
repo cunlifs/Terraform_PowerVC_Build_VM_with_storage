@@ -32,8 +32,8 @@ resource "openstack_compute_keypair_v2" "vm-key-pair" {
     public_key = file("${var.public_key_file}")
 }
 
-resource "openstack_compute_instance_v2" "smc-vm" {
-    count     = 1
+resource "openstack_compute_instance_v2" "app-vms" {
+    count     = 2
     name      = format("sc-sles-vm-${random_id.rand.hex}-%02d", count.index+1)
     image_id  = var.openstack_image_id_SLES15_SP2
     flavor_id = var.openstack_flavor_id_node_small
@@ -54,19 +54,19 @@ resource "openstack_blockstorage_volume_v3" "volume" {
 
 resource "openstack_compute_volume_attach_v2" "va_1" {
   volume_id  = openstack_blockstorage_volume_v3.volume[0].id
-  instance_id  = openstack_compute_instance_v2.smc-vm[0].id
+  instance_id  = openstack_compute_instance_v2.app-vms[0].id
 }
 
 resource "openstack_compute_volume_attach_v2" "va_2" {
   volume_id  = openstack_blockstorage_volume_v3.volume[1].id
-  instance_id  = openstack_compute_instance_v2.smc-vm[0].id
+  instance_id  = openstack_compute_instance_v2.app-vms[0].id
 }
 
 resource "null_resource" "check_storage" {
     connection {
             type        = "ssh"
             user        = var.sles_username
-            host        = openstack_compute_instance_v2.smc-vm[0].access_ip_v4
+            host        = openstack_compute_instance_v2.app-vms[0].access_ip_v4
             private_key = local.private_key
             agent       = var.ssh_agent
             timeout     = "${var.connection_timeout}m"
