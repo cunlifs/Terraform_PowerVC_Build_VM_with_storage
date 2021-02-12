@@ -45,7 +45,8 @@ resource "openstack_compute_instance_v2" "app-vms" {
     }
 }
 
-resource "openstack_blockstorage_volume_v3" "volume" {
+resource "openstack_blockstorage_volume_v3" "volume-1" {
+  depends_on = [openstack_compute_instance_v2.app-vms]
   count       = 2
   name        = format("volume-${random_id.rand.hex}-%02d", count.index+1)
   description = "Volume created by terraform"
@@ -53,12 +54,12 @@ resource "openstack_blockstorage_volume_v3" "volume" {
 }
 
 resource "openstack_compute_volume_attach_v2" "va_1" {
-  volume_id  = openstack_blockstorage_volume_v3.volume[0].id
+  volume_id  = openstack_blockstorage_volume_v3.volume-1[0].id
   instance_id  = openstack_compute_instance_v2.app-vms[0].id
 }
 
 resource "openstack_compute_volume_attach_v2" "va_2" {
-  volume_id  = openstack_blockstorage_volume_v3.volume[1].id
+  volume_id  = openstack_blockstorage_volume_v3.volume-1[1].id
   instance_id  = openstack_compute_instance_v2.app-vms[0].id
 }
 
@@ -86,25 +87,3 @@ resource "null_resource" "check_storage" {
       ]
   }
 }
-
-#resource "null_resource" "check_storage" {
-#    connection {
-#            type        = "ssh"
-#            user        = var.sles_username
-#            host        = openstack_compute_instance_v2.app-vms[*].access_ip_v4
-#            private_key = local.private_key
-#            agent       = var.ssh_agent
-#            timeout     = "${var.connection_timeout}m"
-#    }
-#    provisioner "remote-exec" {
-#        inline = [
-#            "pvs",
-#            "pvdisplay"
-#        ]
-#    }
-#    provisioner "remote-exec" {
-#        inline = [
-#            "lvs"
-#        ]
-#    }
-#}
